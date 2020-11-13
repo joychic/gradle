@@ -101,6 +101,9 @@ public class DefaultJvmMetadataDetector implements JvmMetadataDetector {
             }
             return error("Command returned unexpected result code: " + exitValue + "\nError output:\n" + errorOutput);
         } catch (ExecException ex) {
+            System.out.println("==========================================================================");
+            ex.printStackTrace();
+            System.out.println("==========================================================================");
             return error(ex.getMessage());
         }
     }
