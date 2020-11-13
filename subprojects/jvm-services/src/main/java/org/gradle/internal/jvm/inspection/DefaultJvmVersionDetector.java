@@ -39,6 +39,7 @@ public class DefaultJvmVersionDetector implements JvmVersionDetector {
     public JavaVersion getJavaVersion(String javaCommand) {
         final File executable = new File(javaCommand);
         if(!executable.exists()) {
+            System.out.println("BOOOOOOOM");
             throw new ExecException("A problem occurred starting process 'command '" + javaCommand + "''");
         }
         return detector.getMetadata(executable.getParentFile().getParentFile()).getLanguageVersion();
