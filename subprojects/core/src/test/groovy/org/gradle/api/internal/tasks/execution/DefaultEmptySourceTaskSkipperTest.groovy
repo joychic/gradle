@@ -25,6 +25,7 @@ import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.execution.ExecutionOutcome
 import org.gradle.internal.execution.OutputChangeListener
 import org.gradle.internal.fingerprint.CurrentFileCollectionFingerprint
+import org.gradle.internal.fingerprint.DirectorySensitivity
 import org.gradle.internal.fingerprint.impl.AbsolutePathFileCollectionFingerprinter
 import org.gradle.test.fixtures.file.TestNameTestDirectoryProvider
 import org.junit.Rule
@@ -42,7 +43,7 @@ class DefaultEmptySourceTaskSkipperTest extends Specification {
     final outputChangeListener = Mock(OutputChangeListener)
     final skipper = new DefaultEmptySourceTaskSkipper(cleanupRegistry, TestFiles.deleter(), outputChangeListener, taskInputsListeners)
     final fileCollectionSnapshotter = TestFiles.fileCollectionSnapshotter()
-    final fingerprinter = new AbsolutePathFileCollectionFingerprinter(fileCollectionSnapshotter)
+    final fingerprinter = new AbsolutePathFileCollectionFingerprinter(DirectorySensitivity.FINGERPRINT_DIRECTORIES, fileCollectionSnapshotter)
 
     def "skips task when sourceFiles are empty and previous output is empty"() {
         when:

@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableSortedMap
 import groovy.transform.CompileStatic
 import org.gradle.api.internal.file.TestFiles
 import org.gradle.internal.fingerprint.CurrentFileCollectionFingerprint
+import org.gradle.internal.fingerprint.DirectorySensitivity
 import org.gradle.internal.fingerprint.impl.AbsolutePathFileCollectionFingerprinter
 import org.gradle.internal.fingerprint.impl.DefaultFileCollectionSnapshotter
 import org.gradle.internal.fingerprint.impl.OutputFileCollectionFingerprinter
@@ -30,7 +31,7 @@ trait FingerprinterFixture {
     abstract TestNameTestDirectoryProvider getTemporaryFolder()
 
     private DefaultFileCollectionSnapshotter snapshotter = TestFiles.fileCollectionSnapshotter()
-    private AbsolutePathFileCollectionFingerprinter inputFingerprinter = new AbsolutePathFileCollectionFingerprinter(snapshotter)
+    private AbsolutePathFileCollectionFingerprinter inputFingerprinter = new AbsolutePathFileCollectionFingerprinter(DirectorySensitivity.FINGERPRINT_DIRECTORIES, snapshotter)
 
     private OutputFileCollectionFingerprinter outputFingerprinter = new OutputFileCollectionFingerprinter(snapshotter)
     def getOutputFingerprinter() { outputFingerprinter }

@@ -29,6 +29,8 @@ import org.gradle.internal.snapshot.SnapshotVisitResult;
 import java.util.HashSet;
 import java.util.Map;
 
+import static org.gradle.internal.fingerprint.DirectorySensitivity.IGNORE_DIRECTORIES;
+
 /**
  * Fingerprint files normalizing the path to the file name.
  *
@@ -60,10 +62,7 @@ public class NameOnlyFingerprintingStrategy extends AbstractFingerprintingStrate
                 @Override
                 public SnapshotVisitResult visitEntry(CompleteFileSystemLocationSnapshot snapshot, boolean isRoot) {
                     String absolutePath = snapshot.getAbsolutePath();
-                    if (processedEntries.add(absolutePath)) {
-                        if (snapshot.getType() == FileType.Directory && directorySensitivity == DirectorySensitivity.IGNORE_DIRECTORIES) {
-                            return SnapshotVisitResult.CONTINUE;
-                        }
+                    if (processedEntries.add(absolutePath) && shouldFingerprint(snapshot)) {
                         FileSystemLocationFingerprint fingerprint = isRoot && snapshot.getType() == FileType.Directory
                             ? IgnoredPathFileSystemLocationFingerprint.DIRECTORY
                             : new DefaultFileSystemLocationFingerprint(snapshot.getName(), snapshot);
@@ -74,6 +73,10 @@ public class NameOnlyFingerprintingStrategy extends AbstractFingerprintingStrate
             });
         }
         return builder.build();
+    }
+
+    private boolean shouldFingerprint(CompleteFileSystemLocationSnapshot snapshot) {
+        return !(snapshot.getType() == FileType.Directory && directorySensitivity == DirectorySensitivity.IGNORE_DIRECTORIES);
     }
 
     @Override

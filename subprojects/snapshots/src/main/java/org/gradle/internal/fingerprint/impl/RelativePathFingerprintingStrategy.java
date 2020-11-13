@@ -65,13 +65,10 @@ public class RelativePathFingerprintingStrategy extends AbstractFingerprintingSt
         for (FileSystemSnapshot root : roots) {
             root.accept(new RelativePathTracker(), (snapshot, relativePath) -> {
                 String absolutePath = snapshot.getAbsolutePath();
-                if (processedEntries.add(absolutePath)) {
+                if (processedEntries.add(absolutePath) && shouldFingerprint(snapshot)) {
                     FileSystemLocationFingerprint fingerprint;
                     if (relativePath.isRoot()) {
                         if (snapshot.getType() == FileType.Directory) {
-                            if (directorySensitivity == IGNORE_DIRECTORIES) {
-                                return SnapshotVisitResult.CONTINUE;
-                            }
                             fingerprint = IgnoredPathFileSystemLocationFingerprint.DIRECTORY;
                         } else {
                             fingerprint = new DefaultFileSystemLocationFingerprint(snapshot.getName(), snapshot);
@@ -85,6 +82,10 @@ public class RelativePathFingerprintingStrategy extends AbstractFingerprintingSt
             });
         }
         return builder.build();
+    }
+
+    private boolean shouldFingerprint(CompleteFileSystemLocationSnapshot snapshot) {
+        return !(snapshot.getType() == FileType.Directory && directorySensitivity == IGNORE_DIRECTORIES);
     }
 
     @Override
