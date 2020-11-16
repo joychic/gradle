@@ -38,6 +38,7 @@ public interface JvmInstallationMetadata {
     }
 
     static JvmInstallationMetadata failure(File javaHome, String errorMessage) {
+        Thread.dumpStack();
         return new FailureInstallationMetadata(javaHome, errorMessage);
     }
 
