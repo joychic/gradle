@@ -21,6 +21,8 @@ import org.gradle.internal.jvm.JavaInfo;
 import org.gradle.process.internal.ExecException;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class DefaultJvmVersionDetector implements JvmVersionDetector {
 
@@ -40,7 +42,11 @@ public class DefaultJvmVersionDetector implements JvmVersionDetector {
         final File executable = new File(javaCommand);
         if(!executable.exists()) {
             System.out.println("BOOOOOOOM");
-            throw new ExecException("A problem occurred starting process 'command '" + javaCommand + "''");
+            StringWriter stringWriter = new StringWriter();
+            final RuntimeException e = new RuntimeException();
+            e.setStackTrace(Thread.currentThread().getStackTrace());
+            e.printStackTrace(new PrintWriter(stringWriter));
+            throw new ExecException("A problem occurred starting process 'command '" + javaCommand + "'' from " + stringWriter.toString());
         }
         return detector.getMetadata(executable.getParentFile().getParentFile()).getLanguageVersion();
     }
